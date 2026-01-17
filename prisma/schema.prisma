@@ -14,18 +14,21 @@ datasource db {
 // X Account Model
 // ==========================================
 model Account {
-  id          String   @id @default(cuid())
-  username    String   @unique
-  displayName String?
-  bio         String?
-  sessionData String?  // Encrypted browser session data
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String    @id @default(cuid())
+  username     String    @unique
+  displayName  String?
+  bio          String?
+  sessionData  String?   // Encrypted browser session data
+  status       String    @default("inactive") // active, inactive, suspended, error
+  isActive     Boolean   @default(true)
+  lastActiveAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   // Relations
-  tweets       Tweet[]
-  styleProfile StyleProfile?
+  tweets          Tweet[]
+  styleProfile    StyleProfile?
+  scheduledTweets ScheduledTweet[]
 
   @@map("accounts")
 }
@@ -150,4 +153,32 @@ model Settings {
   updatedAt DateTime @updatedAt
 
   @@map("settings")
+}
+
+// ==========================================
+// Scheduled Tweet Model
+// ==========================================
+model ScheduledTweet {
+  id          String    @id @default(cuid())
+  accountId   String
+  content     String
+  status      String    @default("pending") // pending, processing, posted, failed, cancelled
+  scheduledFor DateTime?
+  postedAt    DateTime?
+  tweetId     String?   // X tweet ID after posting
+  threadId    String?   // For grouping thread tweets
+  threadPosition Int?   // Position in thread
+  metadata    String?   // JSON: additional data
+  error       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@index([threadId])
+  @@map("scheduled_tweets")
 }

@@ -201,7 +201,7 @@ export class HumanBehaviorService {
   /**
    * Record an action
    */
-  recordAction(actionType: 'tweet' | 'like' | 'reply' | 'retweet'): void {
+  recordAction(actionType: 'tweet' | 'like' | 'reply' | 'retweet' | 'browse'): void {
     this.actionHistory.push({ action: actionType, timestamp: new Date() })
 
     // Update counters
@@ -214,6 +214,9 @@ export class HumanBehaviorService {
         break
       case 'reply':
         this.hourlyReplyCount++
+        break
+      case 'browse':
+        // No rate limiting for browsing
         break
     }
 
