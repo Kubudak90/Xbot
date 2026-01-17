@@ -1,226 +1,117 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+'use client'
+
+import { Header } from '@/components/layout'
+import { StatsCard, RecentActivity, QuickActions, UpcomingTweets } from '@/components/dashboard'
+
+// Mock data - will be replaced with real data from API
+const mockActivities = [
+  { id: '1', type: 'tweet' as const, message: 'Yeni tweet paylaşıldı', account: 'example', timestamp: new Date(Date.now() - 1000 * 60 * 5) },
+  { id: '2', type: 'analysis' as const, message: 'Stil analizi tamamlandı', account: 'example', timestamp: new Date(Date.now() - 1000 * 60 * 60) },
+  { id: '3', type: 'like' as const, message: '3 tweet beğenildi', account: 'example', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) },
+  { id: '4', type: 'follow' as const, message: 'Yeni takipçi: @user123', account: 'example', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 3) },
+]
+
+const mockUpcomingTweets = [
+  { id: '1', content: 'AI teknolojisi hakkında heyecan verici gelişmeler var! Thread geliyor...', scheduledFor: new Date(Date.now() + 1000 * 60 * 60 * 2), account: { username: 'example' } },
+  { id: '2', content: 'Hafta sonu kodlama zamanı! Ne üzerinde çalışıyorsunuz?', scheduledFor: new Date(Date.now() + 1000 * 60 * 60 * 5), account: { username: 'example' } },
+]
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Overview of your X automation activities
-        </p>
-      </div>
+    <div className="min-h-screen">
+      <Header
+        title="Dashboard"
+        subtitle="XBot otomasyon paneline hoş geldiniz"
+      />
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Total Tweets"
-          value="128"
-          description="+12 this week"
-          trend="up"
-        />
-        <StatsCard
-          title="Scheduled"
-          value="5"
-          description="Next in 2 hours"
-          trend="neutral"
-        />
-        <StatsCard
-          title="Style Score"
-          value="87%"
-          description="Above average"
-          trend="up"
-        />
-        <StatsCard
-          title="Success Rate"
-          value="98.4%"
-          description="Last 30 days"
-          trend="up"
-        />
-      </div>
+      <div className="p-6 space-y-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatsCard
+            title="Toplam Tweet"
+            value={128}
+            change={12}
+            color="blue"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+            }
+          />
+          <StatsCard
+            title="Bekleyen Tweet"
+            value={5}
+            color="orange"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+          />
+          <StatsCard
+            title="Stil Eşleşme"
+            value="87%"
+            change={5}
+            color="purple"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+            }
+          />
+          <StatsCard
+            title="Aktif Hesap"
+            value={2}
+            color="green"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            }
+          />
+        </div>
 
-      {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Common tasks you can perform
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
-              <span className="mr-2">+</span>
-              Generate New Tweet
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <span className="mr-2">🎯</span>
-              Analyze Style
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <span className="mr-2">📅</span>
-              Schedule Tweet
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <span className="mr-2">⚙️</span>
-              Configure AI Providers
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Recent Tweets */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Tweets</CardTitle>
-            <CardDescription>
-              Your latest generated content
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <RecentTweet
-              content="Just discovered an amazing way to improve code quality..."
-              status="posted"
-              time="2 hours ago"
-            />
-            <RecentTweet
-              content="Thread: Here are 5 tips for better TypeScript..."
-              status="scheduled"
-              time="In 4 hours"
-            />
-            <RecentTweet
-              content="Working on something exciting! Stay tuned for updates..."
-              status="draft"
-              time="Draft"
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* AI Provider Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle>AI Provider Status</CardTitle>
-          <CardDescription>
-            Active providers and their usage
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <ProviderStatus
-              name="OpenAI GPT-4"
-              status="active"
-              usage={65}
-              priority={1}
-            />
-            <ProviderStatus
-              name="Claude Sonnet"
-              status="active"
-              usage={30}
-              priority={2}
-            />
-            <ProviderStatus
-              name="Gemini Pro"
-              status="inactive"
-              usage={0}
-              priority={3}
-            />
-            <ProviderStatus
-              name="Ollama Local"
-              status="active"
-              usage={5}
-              priority={4}
-            />
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-6">
+            <QuickActions />
+            <RecentActivity activities={mockActivities} />
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
 
-function StatsCard({
-  title,
-  value,
-  description,
-  trend,
-}: {
-  title: string
-  value: string
-  description: string
-  trend: 'up' | 'down' | 'neutral'
-}) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {trend === 'up' && <span className="text-green-500">↑</span>}
-        {trend === 'down' && <span className="text-red-500">↓</span>}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
-      </CardContent>
-    </Card>
-  )
-}
+          {/* Right Column */}
+          <div className="space-y-6">
+            <UpcomingTweets tweets={mockUpcomingTweets} />
 
-function RecentTweet({
-  content,
-  status,
-  time,
-}: {
-  content: string
-  status: 'posted' | 'scheduled' | 'draft'
-  time: string
-}) {
-  const statusColors = {
-    posted: 'success',
-    scheduled: 'warning',
-    draft: 'secondary',
-  } as const
-
-  return (
-    <div className="flex items-start gap-3 rounded-lg border p-3">
-      <div className="flex-1 min-w-0">
-        <p className="text-sm truncate">{content}</p>
-        <p className="text-xs text-muted-foreground mt-1">{time}</p>
+            {/* AI Provider Status */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">AI Sağlayıcıları</h3>
+              <div className="space-y-3">
+                <ProviderItem name="OpenAI GPT-4" status="active" usage={65} />
+                <ProviderItem name="Claude Sonnet" status="active" usage={30} />
+                <ProviderItem name="Gemini Pro" status="inactive" usage={0} />
+                <ProviderItem name="Ollama Local" status="active" usage={5} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <Badge variant={statusColors[status]}>{status}</Badge>
     </div>
   )
 }
 
-function ProviderStatus({
-  name,
-  status,
-  usage,
-  priority,
-}: {
-  name: string
-  status: 'active' | 'inactive'
-  usage: number
-  priority: number
-}) {
+function ProviderItem({ name, status, usage }: { name: string; status: 'active' | 'inactive'; usage: number }) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2 min-w-[180px]">
+    <div className="flex items-center gap-3">
+      <div className={`w-2 h-2 rounded-full ${status === 'active' ? 'bg-green-500' : 'bg-gray-300'}`} />
+      <span className="text-sm text-gray-700 flex-1">{name}</span>
+      <div className="w-20 bg-gray-200 rounded-full h-1.5">
         <div
-          className={`h-2 w-2 rounded-full ${
-            status === 'active' ? 'bg-green-500' : 'bg-gray-300'
-          }`}
+          className="bg-blue-600 h-1.5 rounded-full"
+          style={{ width: `${usage}%` }}
         />
-        <span className="text-sm font-medium">{name}</span>
       </div>
-      <div className="flex-1">
-        <Progress value={usage} className="h-2" />
-      </div>
-      <span className="text-xs text-muted-foreground w-12">{usage}%</span>
-      <Badge variant="outline" className="w-16 justify-center">
-        P{priority}
-      </Badge>
+      <span className="text-xs text-gray-400 w-8">{usage}%</span>
     </div>
   )
 }
