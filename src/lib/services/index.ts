@@ -29,3 +29,20 @@ export type {
   TrendAnalysis,
   ContentSuggestion,
 } from './trend-tracker'
+
+export { TweetGeneratorService, tweetGenerator } from './tweet-generator'
+export type {
+  TweetType,
+  TweetGenerationOptions,
+  GeneratedTweet,
+  ThreadOptions,
+  GeneratedThread,
+} from './tweet-generator'
+
+export { TweetQueueService, tweetQueue } from './tweet-queue'
+export type {
+  QueueStatus,
+  QueuedTweet,
+  QueueStats,
+  ScheduleOptions,
+} from './tweet-queue'
